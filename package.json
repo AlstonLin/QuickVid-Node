@@ -1,0 +1,9 @@
+{
+  "name": "quickvid-node",
+  "version": "0.0.1",
+  "main": "app.js",
+  "dependencies": {
+    "express" : "~4.0.0",
+    "fs" : "*",
+  }
+}
