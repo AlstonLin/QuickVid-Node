@@ -1,33 +1,37 @@
-var express = require('express');
-var app = express();
-var fs = require('fs');
+var app = require('express')();
+var multipart = require('multipart');
+var sys = require('sys');
 
-//To test on browser root url is a simple html form to upload files
-app.get('/', function(req, res){
-  res.send(
+app.get('/', function (req, res) {
+    res.render(
       '<form action="/upload" method="post" enctype="multipart/form-data">'+
-      '<input type="file" name="source">'+
+      '<input type="file" name="upload-file">'+
       '<input type="submit" value="Upload">'+
       '</form>'
-  );
+    );
+  }
+);
+
+app.post('/upload', function (req, res) {
+    req.setBodyEncoding('binary');
+
+    var stream = new multipart.Stream(req);
+    stream.addListener('part', function(part) {
+      part.addListener('body', function(chunk) {
+        var progress = (stream.bytesReceived / stream.bytesTotal * 100).toFixed(2);
+        var mb = (stream.bytesTotal / 1024 / 1024).toFixed(1);
+        sys.print("Uploading " + mb + "mb ("+progress+"%)\015");
+        // chunk could be appended to a file if the uploaded file needs to be saved
+      });
+    });
+    stream.addListener('complete', function() {
+      res.sendHeader(200, {'Content-Type': 'text/plain'});
+      res.sendBody('Thanks for playing!');
+      res.finish();
+      sys.puts("\n=> Done");
+    });
 });
 
-//The upload picture request handler
-app.post('/upload', function(req, res){
-  //This debugging meassage displays all the info that comes with the file
-  console.log("Received file:\n" + JSON.stringify(req.files));
-  //Set the directory names
-  var dir = __dirname+"/uploads/";
-  //We use Node's FileSystem to rename the file, which actually moves it from the /tmp/ folder it goes to on Linux
-  fs.rename(
-    req.files.source.path,
-    photoDir + "test.mp4",
-    function(err){
-      if(err != null){
-        res.send({error:"Error Occurred"});
-      }
-    }
-  );
+app.listen(8080, function(){
+  console.log("Listening on port 8080!")
 });
-
-app.listen(8080);
