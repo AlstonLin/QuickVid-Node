@@ -74,6 +74,25 @@ app.post('/download', function(req, res){
     }
   });
 });
+
+app.post('/like/:id', function(req, res){
+  var id = req.params.id;
+  console.log("Liked Item " + id);
+  Item.findOneAndUpdate({ _id: id}, { $inc: { likes: 1 } }, function (err){
+    console.log("Successfully Liked");
+    res.end("Success");
+  });
+});
+
+app.post('/pass/:id', function(req, res){
+  var id = req.params.id;
+  console.log("Passed Item " + id);
+  Item.findOneAndUpdate({ _id: id}, { $inc: { passes: 1 } }, function (err){
+    console.log("Successfully Passed");
+    res.end("Success");
+  });
+});
+
 // Starts server
 app.listen(8080, function(){
   console.log("Working on port 8080");
