@@ -5,7 +5,9 @@
     "express": "4.13.3",
     "multer": "1.1.0",
     "mongoose" : "*",
-    "connect" : "*"
+    "connect" : "*",
+    "body-parser":"*",
+    "mongodb" : "*"
   },
   "devDependencies": {
     "should": "~7.1.0",
